@@ -31,7 +31,7 @@ jobs:
         run: echo "${{ env.VERSION }}" | docker build -t crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ env.VERSION }} .
 
       - name: Push Docker image
-        run: docker push crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ env.VERSION }}
+        run: echo "${{ env.VERSION }}" | docker push crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ env.VERSION }}
 
   deploy:
     needs: build

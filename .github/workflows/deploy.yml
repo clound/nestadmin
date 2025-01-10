@@ -10,32 +10,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: 检出代码
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Step 2: 生成版本号并保存为输出
       - name: Set version
+        id: set_version
         run: echo "VERSION=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+        # 设置输出
+        echo "::set-output name=VERSION::$(date +'%Y%m%d%H%M%S')"
 
+      # Step 3: 设置 Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      # Step 4: 登录阿里云容器注册服务
       - name: Login to Alibaba Cloud Container Registry
         run: |
           echo "${{ secrets.ALIYUN_DOCKER_PASSWORD }}" | docker login --username ${{ secrets.ALIYUN_DOCKER_USERNAME }} --password-stdin crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com
 
+      # Step 5: 构建 Docker 镜像
       - name: Build Docker image
-        run: docker build -t crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ env.VERSION }} .
+        run: |
+          docker build -t crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ steps.set_version.outputs.VERSION }} .
 
+      # Step 6: 推送 Docker 镜像
       - name: Push Docker image
-        run: docker push crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ env.VERSION }}
+        run: |
+          docker push crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ steps.set_version.outputs.VERSION }}
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    env:
-      VERSION: ${{ env.VERSION }}
 
     steps:
+      # Step 1: 使用 SSH 部署
       - name: SSH to server and deploy
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -45,7 +55,7 @@ jobs:
           script: |
             set -e
             echo "${{ secrets.ALIYUN_DOCKER_PASSWORD }}" | docker login --username ${{ secrets.ALIYUN_DOCKER_USERNAME }} --password-stdin crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com
-            docker pull crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ env.VERSION }}
+            docker pull crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ needs.build.outputs.VERSION }}
             docker stop backend-admin 2>/dev/null || true
             docker rm backend-admin 2>/dev/null || true
-            docker run -d --name backend-admin -p 3000:3000 crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ env.VERSION }}
+            docker run -d --name backend-admin -p 3000:3000 crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ needs.build.outputs.VERSION }}

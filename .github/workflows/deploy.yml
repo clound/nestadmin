@@ -28,10 +28,10 @@ jobs:
           echo "${{ secrets.ALIYUN_DOCKER_PASSWORD }}" | docker login --username ${{ secrets.ALIYUN_DOCKER_USERNAME }} --password-stdin crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com
 
       - name: Build Docker image
-        run: echo "${{ env.VERSION }}" | docker build -t crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ env.VERSION }} .
+        run: echo "${{ steps.set_version.outputs.version }}" | docker build -t crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ steps.set_version.outputs.version }} .
 
       - name: Push Docker image
-        run: echo "${{ env.VERSION }}" | docker push crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ env.VERSION }}
+        run: echo "${{ steps.set_version.outputs.version }}" | docker push crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com/backend-admin/backend-admin:${{ steps.set_version.outputs.version }}
 
   deploy:
     needs: build

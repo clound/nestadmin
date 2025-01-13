@@ -13,7 +13,7 @@ services:
     # 容器重启策略
     restart: always
     networks:
-      - common-network
+      - app-network
   mysql:
     image: mysql
     ports:
@@ -24,14 +24,14 @@ services:
       MYSQL_ROOT_PASSWORD: 123456
     restart: always
     networks:
-      - common-network
+      - app-network
   redis:
     image: redis
     ports:
       - '6379:6379'
     restart: always
     networks:
-      - common-network
+      - app-network
 networks:
-  common-network:
+  app-network:
     driver: bridge

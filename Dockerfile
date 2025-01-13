@@ -4,10 +4,11 @@ WORKDIR /app
 # 复制 package.json 和 package-lock.json
 COPY package*.json ./
 # 安装依赖
-RUN npm install
+RUN npm config set registry https://registry.npmmirror.com/ \
+    && npm install
 # 复制源代码
 COPY . .
-# 构建 Nest 应用
+# 构建应用
 RUN npm run build
 # 绑定应用到 3000 端口
 EXPOSE 3000

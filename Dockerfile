@@ -1,24 +1,32 @@
-# 使用官方 Node 镜像
-FROM node:20
+FROM node:alpine AS builder
 
-# 创建并设置工作目录
 WORKDIR /app
 
-# 复制 package.json 和 package-lock.json
-COPY package*.json ./
+COPY package.json .
 
-# 安装依赖
-RUN yarn install
+# RUN npm config set registry https://registry.npmmirror.com/
 
-# 复制源代码
+# 需要打包所以需要完整的依赖
+RUN npm install
+
 COPY . .
 
-# 构建 Nest 应用
-RUN yarn build
+RUN npm run build
 
-# 绑定应用到 3000 端口
+FROM node:alpine AS runner
+
+COPY --from=builder /app/dist /app
+COPY --from=builder /app/package.json /app/package.json
+
+# RUN npm config set registry https://registry.npmmirror.com/
+
+WORKDIR /app
+
+# 移除开发依赖
+RUN npm install --omit=dev
+
 EXPOSE 3000
 
 # 启动应用
-CMD ["yarn", "start"]
+CMD ["npm", "start"]
 

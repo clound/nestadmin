@@ -1,7 +1,4 @@
-FROM registry.cn-hangzhou.aliyuncs.com/nodejs/node:18-alpine
-
-# 设置 npm 镜像源
-RUN echo "https://registry.npmmirror.com" > ~/.npmrc
+FROM registry.cn-hangzhou.aliyuncs.com/nodejs/node:20
 
 # 创建并设置工作目录
 WORKDIR /app

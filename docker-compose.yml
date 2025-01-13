@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  action-test:
+  backend-admin:
     build:
       context: ./
       dockerfile: ./Dockerfile

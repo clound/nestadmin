@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM registry.cn-hangzhou.aliyuncs.com/aliyun-node/alinode:18-alpine
 
 # 设置 npm 镜像源
 RUN echo "https://registry.npmmirror.com" > ~/.npmrc

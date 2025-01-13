@@ -1,4 +1,4 @@
-FROM registry.cn-hangzhou.aliyuncs.com/nodejs/node:20
+FROM node:20
 
 # 创建并设置工作目录
 WORKDIR /app

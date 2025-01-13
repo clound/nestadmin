@@ -46,6 +46,10 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             set -e
+            echo "Current directory:"
+            pwd
+            echo "Directory contents:"
+            ls -l
             VERSION=${{ needs.build.outputs.version }}
             echo "${{ secrets.ALIYUN_DOCKER_PASSWORD }}" | docker login --username ${{ secrets.ALIYUN_DOCKER_USERNAME }} --password-stdin crpi-m0l230262f9a3pdl.cn-hangzhou.personal.cr.aliyuncs.com
             docker-compose down && docker-compose pull && docker-compose up -d

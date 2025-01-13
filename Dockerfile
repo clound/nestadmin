@@ -1,6 +1,8 @@
 # 使用官方 Node 镜像
 FROM node:20
 
+RUN npm install -g pnpm
+
 # 创建并设置工作目录
 WORKDIR /app
 
@@ -8,16 +10,16 @@ WORKDIR /app
 COPY package*.json ./
 
 # 安装依赖
-RUN yarn install
+RUN pnpm install
 
 # 复制源代码
 COPY . .
 
 # 构建 Nest 应用
-RUN yarn build
+RUN pnpm run build
 
 # 绑定应用到 3000 端口
 EXPOSE 3000
 
 # 启动应用
-CMD ["yarn", "start"]
+CMD ["pnpm", "start"]

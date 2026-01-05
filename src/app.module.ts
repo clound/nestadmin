@@ -6,6 +6,13 @@ import envConfig from './config/env';
 import { AppService } from './app.service';
 import { UserModule } from './system/user/user.module';
 import { PostsModule } from './system/posts/posts.module';
+import { AuthModule } from './system/auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './system/auth/jwt-auth.grard';
+// import { RedisService } from './redis/redis.service';
+import { RedisModule } from './redis/redis.module';
+import { UploadModule } from './system/upload/upload.module';
+import { LoggerService } from './system/logger/logger.service';
 
 @Module({
   imports: [
@@ -31,8 +38,19 @@ import { PostsModule } from './system/posts/posts.module';
     }),
     UserModule,
     PostsModule,
+    AuthModule,
+    RedisModule,
+    UploadModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    LoggerService,
+    // RedisService,
+  ],
 })
 export class AppModule { }

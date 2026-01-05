@@ -1,5 +1,16 @@
 version: '3.8'
 services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend-admin
+    restart: always
+    networks:
+      - app-network
   backend-admin:
     build:
       context: ./
@@ -8,8 +19,8 @@ services:
     depends_on:
       - mysql
       - redis
-    ports:
-      - '3000:3000'
+    expose:
+      - '3000'
     # 容器重启策略
     restart: always
     networks:
